@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Massing Study">
+  <title>Massing Study</title>
+  <rect width="64" height="64" rx="10" fill="#f2efe9"/>
+  <!-- Site plane -->
+  <path d="M6 42 32 28 58 42 32 56Z" fill="#e0dbd1" stroke="#8d8577" stroke-width="1"/>
+  <!-- Two stacked masses, drawn in the same axonometric as the app -->
+  <g stroke="#2c3038" stroke-width="1.6" stroke-linejoin="round">
+    <path d="M16 38 32 29 48 38 32 47Z" fill="#f6f4ef"/>
+    <path d="M16 38v-7l16-9v7Z" fill="#cfc9be"/>
+    <path d="M48 38v-7l-16-9v7Z" fill="#bdb6a9"/>
+    <path d="M20 22 32 15 44 22 32 29Z" fill="#fffefb"/>
+    <path d="M20 22v-6l12-7v6Z" fill="#cfc9be"/>
+    <path d="M44 22v-6l-12-7v6Z" fill="#bdb6a9"/>
+  </g>
+</svg>
