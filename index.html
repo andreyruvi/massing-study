@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Massing Study — early feasibility for a single plot</title>
+<meta name="description" content="Work out what fits on a plot: setbacks, buildable envelope, floor areas, plot ratio, site coverage, height and overshadowing. Runs entirely in the browser.">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="styles/massing-study.css">
+<link rel="stylesheet" href="styles/print.css" media="print">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+</head>
+<body data-buildable="true">
+
+<a class="skip-link" href="#drawing">Skip to the drawing</a>
+
+<header class="masthead">
+  <div class="masthead__title">
+    <h1>Massing Study</h1>
+    <p>What fits on the plot, before anyone draws a plan.</p>
+  </div>
+  <div class="masthead__actions">
+    <button type="button" data-action="print" class="button">Print sheet</button>
+    <button type="button" data-action="reset" class="button">Reset</button>
+  </div>
+</header>
+
+<p class="intro">
+  Enter the plot and its planning limits. Everything is computed in the browser —
+  nothing is uploaded, and the page works offline once loaded. Figures are indicative:
+  they are the arithmetic of a feasibility sketch, not a planning determination.
+</p>
+
+<main class="layout">
+
+  <form class="panel controls" data-form aria-label="Scheme inputs">
+
+    <div class="field field--wide">
+      <label for="name">Study name</label>
+      <input type="text" id="name" name="name" placeholder="Plot 12, Nguyễn Trãi" autocomplete="off">
+    </div>
+
+    <fieldset>
+      <legend>Plot</legend>
+      <div class="grid">
+        <div class="field">
+          <label for="siteWidth">Width <span class="unit">m</span></label>
+          <input type="number" id="siteWidth" name="siteWidth" value="20" min="1" step="0.1" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="siteDepth">Depth <span class="unit">m</span></label>
+          <input type="number" id="siteDepth" name="siteDepth" value="30" min="1" step="0.1" inputmode="decimal">
+        </div>
+        <div class="field field--wide">
+          <label for="surveyedArea">Surveyed area <span class="unit">m²</span></label>
+          <input type="number" id="surveyedArea" name="surveyedArea" min="1" step="0.1" inputmode="decimal" placeholder="optional">
+          <p class="hint">For an irregular plot, enter the surveyed area. It overrides width × depth in every ratio.</p>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Setbacks</legend>
+      <div class="grid">
+        <div class="field">
+          <label for="setbackFront">Front <span class="unit">m</span></label>
+          <input type="number" id="setbackFront" name="setbackFront" value="5" min="0" step="0.1" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="setbackRear">Rear <span class="unit">m</span></label>
+          <input type="number" id="setbackRear" name="setbackRear" value="3" min="0" step="0.1" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="setbackLeft">Left <span class="unit">m</span></label>
+          <input type="number" id="setbackLeft" name="setbackLeft" value="2" min="0" step="0.1" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="setbackRight">Right <span class="unit">m</span></label>
+          <input type="number" id="setbackRight" name="setbackRight" value="2" min="0" step="0.1" inputmode="decimal">
+        </div>
+      </div>
+      <p class="hint">The front edge faces the bottom of the drawing; north is marked on the sheet.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Building</legend>
+      <div class="grid">
+        <div class="field">
+          <label for="storeys">Storeys</label>
+          <input type="number" id="storeys" name="storeys" value="3" min="1" max="60" step="1" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label for="floorToFloor">Floor to floor <span class="unit">m</span></label>
+          <input type="number" id="floorToFloor" name="floorToFloor" value="3.2" min="2" step="0.05" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="stepbackFrom">Step back from storey</label>
+          <input type="number" id="stepbackFrom" name="stepbackFrom" value="0" min="0" max="60" step="1" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label for="stepbackDistance">Step back by <span class="unit">m</span></label>
+          <input type="number" id="stepbackDistance" name="stepbackDistance" value="0" min="0" step="0.1" inputmode="decimal">
+        </div>
+        <div class="field field--wide">
+          <label for="efficiency">Net to gross <span class="unit">%</span></label>
+          <input type="number" id="efficiency" name="efficiency" value="82" min="1" max="100" step="1" inputmode="numeric">
+          <p class="hint">The share of gross floor area that ends up as usable space. 80–85% is typical for housing.</p>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Planning limits</legend>
+      <div class="grid">
+        <div class="field">
+          <label for="limitPlotRatio">Max plot ratio</label>
+          <input type="number" id="limitPlotRatio" name="limitPlotRatio" value="2" min="0" step="0.05" inputmode="decimal" placeholder="none">
+        </div>
+        <div class="field">
+          <label for="limitHeight">Max height <span class="unit">m</span></label>
+          <input type="number" id="limitHeight" name="limitHeight" value="12" min="0" step="0.1" inputmode="decimal" placeholder="none">
+        </div>
+        <div class="field">
+          <label for="limitCoverage">Max coverage <span class="unit">%</span></label>
+          <input type="number" id="limitCoverage" name="limitCoverage" value="60" min="0" max="100" step="1" inputmode="numeric" placeholder="none">
+        </div>
+      </div>
+      <p class="hint">Leave a limit blank and it is not checked.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>View</legend>
+      <div class="grid">
+        <div class="field">
+          <label for="viewAzimuth">Camera bearing <span class="unit">°</span></label>
+          <input type="range" id="viewAzimuth" name="viewAzimuth" value="135" min="0" max="360" step="5">
+        </div>
+        <div class="field">
+          <label for="viewElevation">Camera elevation <span class="unit">°</span></label>
+          <input type="range" id="viewElevation" name="viewElevation" value="30" min="5" max="90" step="5">
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Sun study</legend>
+      <div class="field field--check">
+        <input type="checkbox" id="sunEnabled" name="sunEnabled" checked>
+        <label for="sunEnabled">Cast the ground shadow</label>
+      </div>
+      <div class="grid">
+        <div class="field">
+          <label for="latitude">Latitude <span class="unit">°N</span></label>
+          <input type="number" id="latitude" name="latitude" value="21.03" min="-66" max="66" step="0.01" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="sunDay">Day of year</label>
+          <input type="range" id="sunDay" name="sunDay" value="355" min="1" max="365" step="1">
+        </div>
+        <div class="field field--wide">
+          <label for="sunHour">Solar time <span class="unit">h</span></label>
+          <input type="range" id="sunHour" name="sunHour" value="10" min="0" max="24" step="0.25">
+        </div>
+      </div>
+      <p class="hint">Day 355 is the December solstice — the longest shadows of the year north of the equator.</p>
+    </fieldset>
+
+  </form>
+
+  <div class="panel drawing" id="drawing" data-drawing>
+    <h2 class="panel__title">Axonometric</h2>
+    <div class="canvas-frame">
+      <canvas data-canvas width="800" height="600" role="img"
+        aria-label="Axonometric drawing of the massing on its plot. The figures below state the same information as text."></canvas>
+    </div>
+    <p class="warning" data-warning hidden></p>
+    <p class="sun-line" data-sun></p>
+    <div class="export-row">
+      <button type="button" class="button" data-action="export-obj">Export OBJ</button>
+      <button type="button" class="button" data-action="export-csv">Export schedule (CSV)</button>
+      <button type="button" class="button" data-action="export-png">Export drawing (PNG)</button>
+      <button type="button" class="button" data-action="save-preset">Save scheme</button>
+      <button type="button" class="button" data-action="load-preset">Load scheme</button>
+    </div>
+  </div>
+
+  <div class="panel readouts" data-readouts>
+    <h2 class="panel__title">Schedule</h2>
+
+    <dl class="metrics">
+      <div class="metric"><dt>Site area</dt><dd data-metric="site-area">—</dd></div>
+      <div class="metric"><dt>Buildable envelope</dt><dd data-metric="envelope">—</dd></div>
+      <div class="metric"><dt>Footprint</dt><dd data-metric="footprint">—</dd></div>
+      <div class="metric"><dt>Gross floor area</dt><dd data-metric="gfa">—</dd></div>
+      <div class="metric"><dt>Net floor area</dt><dd data-metric="nfa">—</dd></div>
+      <div class="metric"><dt>Plot ratio</dt><dd data-metric="plot-ratio">—</dd></div>
+      <div class="metric"><dt>Site coverage</dt><dd data-metric="coverage">—</dd></div>
+      <div class="metric"><dt>Height</dt><dd data-metric="height">—</dd></div>
+    </dl>
+
+    <h3>Area schedule</h3>
+    <div class="table-scroll">
+      <table class="data-table">
+        <caption class="visually-hidden">Floor area by storey</caption>
+        <thead>
+          <tr>
+            <th scope="col">Level</th>
+            <th scope="col">Plan <span class="unit">m</span></th>
+            <th scope="col" class="numeric">Area</th>
+            <th scope="col" class="numeric">At height</th>
+            <th scope="col">Note</th>
+          </tr>
+        </thead>
+        <tbody data-schedule-body></tbody>
+        <tfoot>
+          <tr>
+            <th scope="row" colspan="2">Gross floor area</th>
+            <td class="numeric" data-schedule-total>—</td>
+            <td colspan="2"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <h3>Planning checks</h3>
+    <p class="verdict" data-verdict data-state="none">—</p>
+    <div class="table-scroll" data-checks-table>
+      <table class="data-table checks">
+        <caption class="visually-hidden">Scheme against the plot's planning limits</caption>
+        <thead>
+          <tr>
+            <th scope="col">Check</th>
+            <th scope="col" class="numeric">Scheme</th>
+            <th scope="col" class="numeric">Limit</th>
+            <th scope="col" class="numeric">Headroom</th>
+            <th scope="col">Result</th>
+          </tr>
+        </thead>
+        <tbody data-checks></tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<p class="status" data-status role="status" aria-live="polite"></p>
+
+<footer class="footer">
+  <p>
+    Massing Study is original work by
+    <a href="https://github.com/andreyruvi">Duong L.</a> — no dependencies, no tracking,
+    no server. <a href="https://github.com/andreyruvi/massing-study">Source and licence on GitHub</a>.
+  </p>
+  <p class="hint">
+    Indicative only. Always check the figures against the applicable planning
+    ordinance and a surveyed site plan before relying on them.
+  </p>
+</footer>
+
+<script type="module" src="src/main.js"></script>
+</body>
+</html>

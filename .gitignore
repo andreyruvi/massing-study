@@ -2,3 +2,16 @@
 node_modules/
 package-lock.json
 
+# Editor and OS noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Local exports produced while testing the tool
+*.obj
+*.csv
+*.png
+!assets/*.png
+massing-study.json

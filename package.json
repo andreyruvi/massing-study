@@ -1,0 +1,42 @@
+{
+  "name": "massing-study",
+  "version": "1.0.0",
+  "description": "Early feasibility for a single plot: setbacks, buildable envelope, floor areas, plot ratio, site coverage, height and overshadowing, drawn in axonometric. No dependencies, no build, no server.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Duong L. (https://github.com/andreyruvi)",
+  "homepage": "https://andreyruvi.github.io/massing-study/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andreyruvi/massing-study.git"
+  },
+  "bugs": {
+    "url": "https://github.com/andreyruvi/massing-study/issues"
+  },
+  "keywords": [
+    "architecture",
+    "massing",
+    "feasibility",
+    "plot-ratio",
+    "setback",
+    "axonometric",
+    "solar",
+    "shadow",
+    "planning",
+    "obj-export"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "serve": "node tools/serve.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "private": false,
+  "files": [
+    "index.html",
+    "src",
+    "styles",
+    "assets"
+  ]
+}
