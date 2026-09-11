@@ -1,0 +1,4 @@
+# There are no dependencies, but a stray install should not be committed.
+node_modules/
+package-lock.json
+
