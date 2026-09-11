@@ -1,0 +1,464 @@
+/*
+ * Massing Study — screen styles.
+ *
+ * The palette is a drafting palette: warm paper, graphite line, one accent for
+ * a breach. The canvas colours live here rather than in JavaScript so the dark
+ * theme and the print sheet only have to redefine tokens.
+ */
+
+:root {
+  /* Paper and ink */
+  --c-paper: #f6f4ef;
+  --c-panel: #fffefb;
+  --c-ink: #22262c;
+  --c-ink-soft: #5c636e;
+  --c-rule: #dcd7cd;
+  --c-line: #3b3f46;
+  --c-line-soft: #9c968a;
+
+  /* Drawing fills, read by the renderer */
+  --c-site: #e9e5dc;
+  --c-wall: #cfc9be;
+  --c-roof: #f3f0ea;
+  --c-shadow: rgba(40, 44, 52, 0.28);
+
+  --c-pass: #2f6b46;
+  --c-pass-bg: #e6f0e8;
+  --c-fail: #9a3325;
+  --c-fail-bg: #f7e7e3;
+  --c-focus: #2f5d8c;
+
+  --radius: 6px;
+  --gap: 1rem;
+  --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --c-paper: #16181c;
+    --c-panel: #1d2025;
+    --c-ink: #e6e3dc;
+    --c-ink-soft: #a3a8b2;
+    --c-rule: #32363d;
+    --c-line: #cdd2da;
+    --c-line-soft: #6d7480;
+
+    --c-site: #272b31;
+    --c-wall: #3d434b;
+    --c-roof: #565d66;
+    --c-shadow: rgba(0, 0, 0, 0.42);
+
+    --c-pass: #7fc79a;
+    --c-pass-bg: #1e2b23;
+    --c-fail: #e79484;
+    --c-fail-bg: #2e1f1c;
+    --c-focus: #7fb0e0;
+  }
+}
+
+/*
+ * The print palette, defined once. The canvas is a bitmap, so `@media print`
+ * cannot recolour it — the drawing has to be repainted before the print
+ * dialog opens. `body.printing` is added on `beforeprint` for exactly that,
+ * and the `@media print` mapping is the fallback for a browser that prints
+ * without firing the event.
+ */
+:root {
+  --p-paper: #ffffff;
+  --p-panel: #ffffff;
+  --p-ink: #000000;
+  --p-ink-soft: #333333;
+  --p-rule: #999999;
+  --p-line: #000000;
+  --p-line-soft: #777777;
+  --p-site: #f0f0f0;
+  --p-wall: #d8d8d8;
+  --p-roof: #ffffff;
+  --p-shadow: rgba(0, 0, 0, 0.18);
+  --p-pass: #000000;
+  --p-pass-bg: #ffffff;
+  --p-fail: #000000;
+  --p-fail-bg: #eeeeee;
+}
+
+body.printing {
+  --c-paper: var(--p-paper);
+  --c-panel: var(--p-panel);
+  --c-ink: var(--p-ink);
+  --c-ink-soft: var(--p-ink-soft);
+  --c-rule: var(--p-rule);
+  --c-line: var(--p-line);
+  --c-line-soft: var(--p-line-soft);
+  --c-site: var(--p-site);
+  --c-wall: var(--p-wall);
+  --c-roof: var(--p-roof);
+  --c-shadow: var(--p-shadow);
+  --c-pass: var(--p-pass);
+  --c-pass-bg: var(--p-pass-bg);
+  --c-fail: var(--p-fail);
+  --c-fail-bg: var(--p-fail-bg);
+}
+
+@media print {
+  :root {
+    --c-paper: var(--p-paper);
+    --c-panel: var(--p-panel);
+    --c-ink: var(--p-ink);
+    --c-ink-soft: var(--p-ink-soft);
+    --c-rule: var(--p-rule);
+    --c-line: var(--p-line);
+    --c-line-soft: var(--p-line-soft);
+    --c-site: var(--p-site);
+    --c-wall: var(--p-wall);
+    --c-roof: var(--p-roof);
+    --c-shadow: var(--p-shadow);
+    --c-pass: var(--p-pass);
+    --c-pass-bg: var(--p-pass-bg);
+    --c-fail: var(--p-fail);
+    --c-fail-bg: var(--p-fail-bg);
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 1.25rem clamp(1rem, 3vw, 2rem) 2.5rem;
+  background: var(--c-paper);
+  color: var(--c-ink);
+  font: 400 15px/1.5 var(--font);
+  -webkit-text-size-adjust: 100%;
+}
+
+h1, h2, h3 { line-height: 1.2; margin: 0; font-weight: 600; }
+h1 { font-size: 1.4rem; letter-spacing: -0.01em; }
+h3 { font-size: 0.95rem; margin: 1.5rem 0 0.5rem; }
+p { margin: 0; }
+a { color: var(--c-focus); }
+
+:where(a, button, input, [tabindex]):focus-visible {
+  outline: 2px solid var(--c-focus);
+  outline-offset: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+}
+.skip-link:focus {
+  left: 1rem;
+  top: 1rem;
+  z-index: 10;
+  padding: 0.5rem 0.75rem;
+  background: var(--c-panel);
+  border: 1px solid var(--c-rule);
+  border-radius: var(--radius);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---- Masthead ---- */
+
+.masthead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--gap);
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--c-rule);
+}
+
+.masthead__title p {
+  color: var(--c-ink-soft);
+  font-size: 0.9rem;
+  margin-top: 0.15rem;
+}
+
+.masthead__actions { display: flex; gap: 0.5rem; }
+
+.intro {
+  max-width: 62ch;
+  margin: 0.9rem 0 1.25rem;
+  color: var(--c-ink-soft);
+  font-size: 0.9rem;
+}
+
+/* ---- Layout ---- */
+
+.layout {
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: minmax(250px, 300px) minmax(0, 1fr) minmax(320px, 470px);
+  align-items: start;
+}
+
+@media (max-width: 1180px) {
+  .layout { grid-template-columns: minmax(260px, 340px) minmax(0, 1fr); }
+  .readouts { grid-column: 1 / -1; }
+}
+
+@media (max-width: 780px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .readouts { grid-column: auto; }
+}
+
+.panel {
+  background: var(--c-panel);
+  border: 1px solid var(--c-rule);
+  border-radius: var(--radius);
+  padding: 1rem;
+}
+
+.panel__title {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--c-ink-soft);
+  margin-bottom: 0.75rem;
+}
+
+/* ---- Form ---- */
+
+.controls { display: grid; gap: 1rem; }
+
+fieldset {
+  margin: 0;
+  padding: 0.75rem 0 0;
+  border: 0;
+  border-top: 1px solid var(--c-rule);
+}
+fieldset:first-of-type { border-top: 0; padding-top: 0; }
+
+legend {
+  padding: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--c-ink-soft);
+}
+
+.grid {
+  display: grid;
+  gap: 0.65rem 0.75rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 0.6rem;
+}
+
+.field { display: grid; gap: 0.25rem; min-width: 0; }
+.field--wide { grid-column: 1 / -1; }
+
+.field--check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+.field--check label { font-size: 0.9rem; }
+
+label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--c-ink-soft);
+}
+
+.unit {
+  font-weight: 400;
+  opacity: 0.75;
+}
+
+input[type="text"],
+input[type="number"] {
+  width: 100%;
+  min-width: 0;
+  padding: 0.4rem 0.5rem;
+  font: 400 0.95rem var(--font-mono);
+  color: var(--c-ink);
+  background: var(--c-paper);
+  border: 1px solid var(--c-rule);
+  border-radius: 4px;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--c-focus);
+}
+
+.hint {
+  grid-column: 1 / -1;
+  margin-top: 0.35rem;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--c-ink-soft);
+}
+
+.button {
+  padding: 0.4rem 0.7rem;
+  font: 500 0.85rem var(--font);
+  color: var(--c-ink);
+  background: var(--c-panel);
+  border: 1px solid var(--c-rule);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.button:hover { border-color: var(--c-line-soft); }
+.button:active { transform: translateY(1px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .button:active { transform: none; }
+}
+
+/* ---- Drawing ---- */
+
+.canvas-frame {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  max-width: 100%;
+  background: var(--c-paper);
+  border: 1px solid var(--c-rule);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.warning,
+.sun-line {
+  margin-top: 0.7rem;
+  font-size: 0.85rem;
+  color: var(--c-ink-soft);
+}
+
+.warning {
+  padding: 0.5rem 0.65rem;
+  color: var(--c-fail);
+  background: var(--c-fail-bg);
+  border-radius: 4px;
+}
+
+.export-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+}
+
+/* ---- Readouts ---- */
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.metric {
+  padding: 0.5rem 0.6rem;
+  background: var(--c-paper);
+  border: 1px solid var(--c-rule);
+  border-radius: 4px;
+}
+
+.metric dt {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--c-ink-soft);
+}
+
+.metric dd {
+  margin: 0.15rem 0 0;
+  font: 600 1rem/1.2 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.table-scroll { overflow-x: auto; }
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+/* Five columns in a side panel: the checks table earns tighter setting. */
+.checks { font-size: 0.8rem; }
+.checks th,
+.checks td { padding: 0.35rem 0.35rem; }
+
+.data-table th,
+.data-table td {
+  padding: 0.35rem 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid var(--c-rule);
+}
+
+/* Figures must not wrap mid-number; headings and notes may. */
+.data-table .numeric,
+.data-table .dimension,
+.data-table tbody th { white-space: nowrap; }
+
+/* A unit of measure is never capitalised, even inside a small-caps heading. */
+.data-table thead .unit { text-transform: none; }
+
+.data-table thead th {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--c-ink-soft);
+}
+
+.data-table tbody th { font-weight: 600; }
+.data-table td { font-variant-numeric: tabular-nums; }
+.data-table .numeric { text-align: right; }
+.data-table tfoot th,
+.data-table tfoot td {
+  border-bottom: 0;
+  font-weight: 600;
+}
+
+.checks tbody tr[data-result="pass"] .verdict-cell { color: var(--c-pass); font-weight: 600; }
+.checks tbody tr[data-result="fail"] .verdict-cell { color: var(--c-fail); font-weight: 600; }
+.checks tbody tr[data-result="fail"] { background: var(--c-fail-bg); }
+
+.verdict {
+  padding: 0.5rem 0.65rem;
+  border-radius: 4px;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+.verdict[data-state="pass"] { color: var(--c-pass); background: var(--c-pass-bg); }
+.verdict[data-state="fail"] { color: var(--c-fail); background: var(--c-fail-bg); }
+.verdict[data-state="none"] { color: var(--c-ink-soft); background: var(--c-paper); }
+
+/* ---- Status and footer ---- */
+
+.status {
+  min-height: 1.3rem;
+  margin-top: var(--gap);
+  font-size: 0.85rem;
+  color: var(--c-ink-soft);
+}
+
+.footer {
+  margin-top: 1.5rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--c-rule);
+  font-size: 0.85rem;
+  color: var(--c-ink-soft);
+  display: grid;
+  gap: 0.4rem;
+  max-width: 70ch;
+}

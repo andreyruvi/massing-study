@@ -1,0 +1,132 @@
+/*
+ * Massing Study — print sheet.
+ *
+ * A feasibility study gets printed and pinned up, so the print view is a real
+ * sheet rather than a screenshot of the page: A4 portrait, the drawing above
+ * the schedule, the controls and buttons gone, and every colour forced back to
+ * paper-and-ink so a dark-theme screen does not print a black page.
+ */
+
+@page {
+  size: A4 portrait;
+  margin: 14mm;
+}
+
+/*
+ * The print palette itself lives in massing-study.css, because the canvas is a
+ * bitmap that has to be repainted before the dialog opens rather than
+ * recoloured by this file. This sheet is layout only.
+ */
+
+body {
+  padding: 0;
+  background: #fff;
+  color: #000;
+  font-size: 10pt;
+}
+
+/* Controls, buttons and the live-region status have no place on a sheet. */
+.controls,
+.masthead__actions,
+.export-row,
+.skip-link,
+.status {
+  display: none !important;
+}
+
+.masthead {
+  border-bottom: 1pt solid #000;
+  padding-bottom: 3mm;
+}
+
+.intro {
+  margin: 3mm 0;
+  max-width: none;
+  font-size: 9pt;
+}
+
+.layout {
+  display: block;
+}
+
+.panel {
+  border: 0;
+  padding: 0;
+  margin-bottom: 3mm;
+  background: none;
+}
+
+.panel__title {
+  font-size: 8pt;
+  margin-bottom: 2mm;
+}
+
+.canvas-frame {
+  border: 0.5pt solid #666;
+  /* A 4:3 drawing at A4 width is 136mm tall and pushes the schedule onto a
+     second sheet. Capping the height keeps a typical study on one page, which
+     is what gets pinned up. */
+  aspect-ratio: auto;
+  height: 68mm;
+  /* Match the box to the drawing's own proportion so the frame is not mostly
+     empty paper either side of it. */
+  max-width: 91mm;
+  margin-inline: auto;
+  break-inside: avoid;
+}
+
+canvas { height: 100%; }
+
+.readouts {
+  break-before: auto;
+}
+
+.metrics {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2mm;
+}
+
+.metric {
+  border: 0.5pt solid #999;
+  break-inside: avoid;
+}
+
+.metric dd { font-size: 10pt; }
+
+h3 { margin: 3mm 0 1.5mm; font-size: 9pt; }
+
+.data-table { font-size: 8.5pt; }
+.data-table th,
+.data-table td { border-bottom: 0.5pt solid #bbb; padding: 1mm 1.5mm; }
+.data-table thead th { border-bottom: 0.75pt solid #666; }
+.data-table tr { break-inside: avoid; }
+/* A total row repeated by a page break reads as a second, wrong total, so a
+   short schedule is kept whole. */
+.data-table { break-inside: avoid; }
+.table-scroll { overflow: visible; }
+
+/* A failed check still has to read as failed in black and white. */
+.checks tbody tr[data-result="fail"] .verdict-cell::after { content: " ✗"; }
+.checks tbody tr[data-result="pass"] .verdict-cell::after { content: " ✓"; }
+
+.verdict {
+  border: 0.5pt solid #666;
+  font-size: 9pt;
+  break-inside: avoid;
+}
+
+.sun-line,
+.warning { font-size: 8.5pt; color: #000; }
+.warning { border: 0.5pt solid #000; }
+
+.footer {
+  break-inside: avoid;
+  margin-top: 4mm;
+  padding-top: 2mm;
+  border-top: 0.5pt solid #999;
+  font-size: 7.5pt;
+  max-width: none;
+}
+
+/* Links print as text; the URL is in the footer already. */
+a { color: #000; text-decoration: none; }
